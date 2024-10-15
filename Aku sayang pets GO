@@ -7,11 +7,46 @@ local Window = OrionLib:MakeWindow({Name = "Pets Go Hub", HidePremium = false, S
 -- Get the player's name dynamically
 local playerName = LocalPlayer.Name
 
--- Miner Tab
-local MinerTab = Window:MakeTab({
+-- Main Tab
+local MainTab = Window:MakeTab({
     Name = "Main",
     Icon = "rbxassetid://4483345998",
     PremiumOnly = false
 })
+
+local CoolToggle = MainTab:AddToggle({
+    Name = "Auto Roll",
+    Default = false,
+    Callback = function(Value)
+        _G.Auto = Value
+        
+        local function UpdateToggleAppearance(isOn)
+            if isOn then
+                CoolToggle:SetColor(Color3.fromRGB(0, 255, 0))
+            else
+                CoolToggle:SetColor(Color3.fromRGB(255, 0, 0))
+            end
+        end
+
+        UpdateToggleAppearance(Value)
+
+        if Value then
+            while _G.Auto do
+                local replicatedStorage = game:GetService("ReplicatedStorage")
+                local network = replicatedStorage:WaitForChild("Network")
+                local eggRoll = network:WaitForChild("Eggs_Roll")
+                
+                eggRoll:InvokeServer()
+                eggRoll:InvokeServer()
+                wait(0.1)
+            end
+        end
+    end  
+})
+
+CoolToggle:SetColor(Color3.fromRGB(255, 0, 0))
+
+
+
 
 OrionLib:Init()
