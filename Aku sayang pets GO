@@ -14,18 +14,23 @@ local MainTab = Window:MakeTab({
     PremiumOnly = false
 })
 
+local Section = MainTab:AddSection({
+    Name = "Egg Roll"
+})
+
 MainTab:AddToggle({
-    Name = "This is a toggle!",
+    Name = "Auto Click Roll (No Animations)",
     Default = false,
-    Callback = function(Value)
-        _G.Auto = Value  -- Set _G.Auto based on the toggle value
-        
-        if Value then  -- If the toggle is set to true
+    Callback = function(isEnabled)
+        _G.Auto = isEnabled  -- Set _G.Auto based on the toggle value
+
+        if isEnabled then  -- If the toggle is set to true
             while _G.Auto do
                 local replicatedStorage = game:GetService("ReplicatedStorage")
                 local network = replicatedStorage:WaitForChild("Network")
                 local eggRoll = network:WaitForChild("Eggs_Roll")
-                
+
+                -- Invoke the server for rolling the egg twice
                 eggRoll:InvokeServer()
                 eggRoll:InvokeServer()
 
@@ -35,5 +40,13 @@ MainTab:AddToggle({
         end
     end
 })
+
+-- Optional: Add a function to safely exit the auto clicking
+game:GetService("Players").PlayerRemoving:Connect(function(player)
+    if player.Name == game.Players.LocalPlayer.Name then
+        _G.Auto = false  -- Stop auto clicking when the player leaves
+    end
+end)
+
 
 OrionLib:Init()
