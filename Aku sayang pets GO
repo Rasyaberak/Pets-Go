@@ -41,42 +41,49 @@ MainTab:AddToggle({
     end
 })
 
+MainTab:AddLabel("Other")
+
+local VirtualUser = game:GetService("VirtualUser")
+local AntiAFKEnabled = false
+
+-- Toggle for Anti-AFK
 MainTab:AddToggle({
-    Name = "Auto Click Roll (With Animations)",
+    Name = "Anti-AFK",
     Default = false,
-    Callback = function(isEnabled)
-        _G.AutoWithAnim = isEnabled
+    Callback = function(Value)
+        AntiAFKEnabled = Value
+        if AntiAFKEnabled then
+            -- Anti-AFK functionality
+            game.Players.LocalPlayer.Idled:Connect(function()
+                if AntiAFKEnabled then
+                    VirtualUser:CaptureController()
+                    VirtualUser:ClickButton2(Vector2.new())
+                    wait(1)
+                end
+            end)
 
-        if isEnabled then
-            local replicatedStorage = game:GetService("ReplicatedStorage")
-            local network = replicatedStorage:WaitForChild("Network")
-            local eggRoll = network:WaitForChild("Eggs_Roll")
-            local animationComplete = network:WaitForChild("Eggs_AnimationComplete")
-
-            local function onAnimationComplete()
-                if _G.AutoWithAnim then
-                    eggRoll:InvokeServer()
+            -- Optional: Move the character slightly every 60 seconds
+            while AntiAFKEnabled do
+                wait(60)
+                local player = game.Players.LocalPlayer
+                if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                    player.Character.HumanoidRootPart.CFrame = player.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 0.1)
                 end
             end
-
-            animationComplete.OnClientEvent:Connect(onAnimationComplete)
-
-            eggRoll:InvokeServer()
         end
     end
 })
 
+
 -- Safely stop auto clicking when the player leaves the game
 game:GetService("Players").PlayerRemoving:Connect(function(player)
     if player == game.Players.LocalPlayer then
-        _G.AutoWithAnim = false
         _G.AutoNoAnim = false 
     end
 end)
 
 -- Disable everything when the player leaves
 game:BindToClose(function()
-    _G.AutoWithAnim = false 
     _G.AutoNoAnim = false
 end)
 
