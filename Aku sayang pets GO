@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-local Window = OrionLib:MakeWindow({Name = "Mining Simulator Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/Rasyaberak/Menu-Lab/refs/heads/main/Menu%20Lab"))();
+local Window = OrionLib:MakeWindow({Name = "Pets Go Hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
 
 -- Get the player's name dynamically
 local playerName = LocalPlayer.Name
