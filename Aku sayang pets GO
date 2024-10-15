@@ -41,7 +41,13 @@ MainTab:AddToggle({
     end
 })
 
-MainTab:AddLabel("Other")
+local Section = MainTab:AddSection({
+    Name = ""
+})
+
+local Section = MainTab:AddSection({
+    Name = "Other"
+})
 
 local VirtualUser = game:GetService("VirtualUser")
 local AntiAFKEnabled = false
