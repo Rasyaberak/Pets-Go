@@ -22,10 +22,10 @@ MainTab:AddToggle({
     Name = "Auto Click Roll (No Animations)",
     Default = false,
     Callback = function(isEnabled)
-        _G.Auto = isEnabled  -- Set _G.Auto based on the toggle value
+        _G.AutoNoAnim = isEnabled  -- Set _G.AutoNoAnim based on the toggle value
 
         if isEnabled then  -- If the toggle is set to true
-            while _G.Auto do
+            while _G.AutoNoAnim do
                 local replicatedStorage = game:GetService("ReplicatedStorage")
                 local network = replicatedStorage:WaitForChild("Network")
                 local eggRoll = network:WaitForChild("Eggs_Roll")
@@ -41,11 +41,43 @@ MainTab:AddToggle({
     end
 })
 
--- Optional: Add a function to safely exit the auto clicking
-game:GetService("Players").PlayerRemoving:Connect(function(player)
-    if player.Name == game.Players.LocalPlayer.Name then
-        _G.Auto = false  -- Stop auto clicking when the player leaves
+MainTab:AddToggle({
+    Name = "Auto Click Roll (With Animations)",
+    Default = false,
+    Callback = function(isEnabled)
+        _G.AutoWithAnim = isEnabled
+
+        if isEnabled then
+            local replicatedStorage = game:GetService("ReplicatedStorage")
+            local network = replicatedStorage:WaitForChild("Network")
+            local eggRoll = network:WaitForChild("Eggs_Roll")
+            local animationComplete = network:WaitForChild("Eggs_AnimationComplete")
+
+            local function onAnimationComplete()
+                if _G.AutoWithAnim then
+                    eggRoll:InvokeServer()
+                end
+            end
+
+            animationComplete.OnClientEvent:Connect(onAnimationComplete)
+
+            eggRoll:InvokeServer()
+        end
     end
+})
+
+-- Safely stop auto clicking when the player leaves the game
+game:GetService("Players").PlayerRemoving:Connect(function(player)
+    if player == game.Players.LocalPlayer then
+        _G.AutoWithAnim = false
+        _G.AutoNoAnim = false 
+    end
+end)
+
+-- Disable everything when the player leaves
+game:BindToClose(function()
+    _G.AutoWithAnim = false 
+    _G.AutoNoAnim = false
 end)
 
 
